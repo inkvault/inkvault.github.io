@@ -4,7 +4,7 @@ title = "Blog"
 
 sort_by = "date"
 
-template = "section.html"
+template = "article_list.html"
 
 page_template = "article.html"
 

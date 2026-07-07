@@ -29,54 +29,36 @@ template = "index.html"
     };
 
     const bootSequence = [
-        { msg: "$ pkg install --recursive ./project", delay: 50 },
-        { msg: "resolving dependency graph...", delay: 250 },
-        { msg: "found 1,204 packages, 38 direct dependencies", delay: 200 },
-        { msg: "checking lockfile integrity... ok", delay: 150 },
-        { msg: "starting fetch stage (12 parallel workers)", delay: 180 },
+        { msg: "options flow scanner v1.8.0 initializing", delay: 50 },
+        { msg: "connecting to OPRA consolidated feed...", delay: 200 },
+        { msg: "feed connected, subscribing to unusual activity alerts", delay: 150 },
+        { msg: "loading watchlist: 40 underlyings", delay: 120 },
+        { msg: "sweep detection threshold set to 3.0x avg volume", delay: 130 },
+        { msg: "scanner armed, monitoring live order flow", delay: 100 }
     ];
 
-    // Fake but plausible package names
-    const prefixes = ["core", "util", "react", "async", "node", "http", "type", "data", "cli", "dev", "test", "build", "web", "fast", "micro", "meta"];
-    const suffixes = ["kit", "js", "lib", "helper", "parser", "loader", "runtime", "cache", "stream", "compat", "tools", "engine", "adapter", "wrapper", "core"];
+    const underlyings = ["AAPL", "TSLA", "NVDA", "AMZN", "MSFT", "SPY", "QQQ", "META", "AMD", "NFLX"];
+    const types = ["CALL", "PUT"];
+    const sentiments = [""];
 
-    const randomPkg = () => {
-        const p = prefixes[Math.floor(Math.random() * prefixes.length)];
-        const s = suffixes[Math.floor(Math.random() * suffixes.length)];
-        const major = Math.floor(Math.random() * 8);
-        const minor = Math.floor(Math.random() * 20);
-        const patch = Math.floor(Math.random() * 30);
-        return `${p}-${s}@${major}.${minor}.${patch}`;
+    // Each underlying keeps a rough persistent price so strikes look plausible
+    const anchors = {
+        AAPL: 195, TSLA: 249, NVDA: 134, AMZN: 202, MSFT: 422,
+        SPY: 545, QQQ: 468, META: 587, AMD: 162, NFLX: 690
     };
 
-    const actions = [
-        { verb: "fetching", weight: 35 },
-        { verb: "resolving", weight: 20 },
-        { verb: "building", weight: 15 },
-        { verb: "linking", weight: 15 },
-        { verb: "verifying", weight: 10 },
-        { verb: "warning", weight: 5 }
-    ];
+    const randomExpiry = () => {
+        const months = ["JUL", "AUG", "SEP", "OCT", "DEC", "JAN"];
+        const m = months[Math.floor(Math.random() * months.length)];
+        const d = Math.floor(Math.random() * 4) * 7 + Math.floor(Math.random() * 5) + 1;
+        const yr = m === "JAN" ? "27" : "26";
+        return `${m}${String(d).padStart(2, "0")}'${yr}`;
+    };
 
-    const warnings = [
-        "deprecated, use v2 instead",
-        "peer dependency mismatch, using closest match",
-        "no license field found",
-        "engine mismatch (expected node >=18)",
-        "bundled dependency, skipping resolution"
-    ];
-
-    let installed = 0;
-    let totalPkgs = 1204;
-
-    const pickAction = () => {
-        const total = actions.reduce((sum, a) => sum + a.weight, 0);
-        let roll = Math.random() * total;
-        for (const a of actions) {
-            if (roll < a.weight) return a.verb;
-            roll -= a.weight;
-        }
-        return "fetching";
+    const nearStrike = (price, type) => {
+        const offsetPct = (Math.random() - 0.4) * 0.12; // skew slightly OTM
+        const raw = price * (1 + offsetPct);
+        return Math.round(raw / 5) * 5; // round to nearest $5 strike
     };
 
     const updateTerminal = (line) => {
@@ -85,51 +67,48 @@ template = "index.html"
         terminal.innerText = buffer.join('\n');
     };
 
-    const generateLine = () => {
-        const verb = pickAction();
-        const pkg = randomPkg();
+    const generateFlow = () => {
+        const ts = getTimestamp();
+        const symbol = underlyings[Math.floor(Math.random() * underlyings.length)];
+        const type = types[Math.floor(Math.random() * types.length)];
+        const price = anchors[symbol];
+        const strike = nearStrike(price, type);
+        const expiry = randomExpiry();
+        const size = Math.floor(Math.random() * 4000 + 200);
+        const premiumPerContract = (Math.random() * 8 + 0.5).toFixed(2);
+        const totalPremium = ((premiumPerContract * size * 100) / 1000).toFixed(0);
+        const sentiment = sentiments[Math.floor(Math.random() * sentiments.length)];
 
-        if (verb === "warning") {
-            const warn = warnings[Math.floor(Math.random() * warnings.length)];
-            return `⚠ warning ${pkg}: ${warn}`;
-        }
+        const isSweep = Math.random() < 0.18;
+        const tag = isSweep ? "SWEEP" : "FLOW";
 
-        if (verb === "fetching") {
-            const size = (Math.random() * 900 + 20).toFixed(0);
-            const speed = (Math.random() * 8 + 0.5).toFixed(1);
-            installed++;
-            return `fetching   ${pkg} (${size}kb @ ${speed}mb/s)`;
-        }
-
-        if (verb === "building") {
-            const time = (Math.random() * 2 + 0.1).toFixed(2);
-            return `building   ${pkg} [${time}s]`;
-        }
-
-        if (verb === "linking") {
-            return `linking    ${pkg} -> node_modules/.pkg`;
-        }
-
-        if (verb === "verifying") {
-            return `verifying  ${pkg} checksum ok`;
-        }
-
-        return `resolving  ${pkg}`;
+        return `[${ts}] ${symbol} ${strike}${type[0]} ${expiry} x${size} @ $${premiumPerContract} ($${totalPremium}k prem) ${sentiment}`;
     };
 
-    const generateProgressLine = () => {
-        const pct = Math.min(100, ((installed / totalPkgs) * 100)).toFixed(1);
-        const remaining = Math.max(0, totalPkgs - installed);
-        return `[${pct}%] ${installed}/${totalPkgs} packages installed, ${remaining} remaining`;
+    const systemEvents = [
+        { msg: "feed heartbeat ok, latency {lat}ms" },
+        { msg: "watchlist refreshed, {n} underlyings active" },
+        { msg: "volume baseline recalculated for session" },
+        { msg: "sweep threshold auto-tuned to current volatility" }
+    ];
+
+    const generateSystemEvent = () => {
+        const ts = getTimestamp();
+        const event = systemEvents[Math.floor(Math.random() * systemEvents.length)];
+        const lat = (Math.random() * 15 + 1).toFixed(0);
+        const n = underlyings.length;
+        const msg = event.msg.replace("{lat}", lat).replace("{n}", n);
+        return `[${ts}][info][scanner] ${msg}`;
     };
 
     let bootIndex = 0;
     const runBootstep = () => {
         if (bootIndex < bootSequence.length) {
             const step = bootSequence[bootIndex];
-            updateTerminal(step.msg);
+            const ts = getTimestamp();
+            updateTerminal(`[${ts}][info][main] ${step.msg}`);
             bootIndex++;
-            const nextDelay = bootIndex < bootSequence.length ? bootSequence[bootIndex].delay : 400;
+            const nextDelay = bootIndex < bootSequence.length ? bootSequence[bootIndex].delay : 800;
             setTimeout(runBootstep, nextDelay);
         } else {
             loop();
@@ -137,17 +116,11 @@ template = "index.html"
     };
 
     const loop = () => {
-        const showProgress = Math.random() < 0.12;
-        const line = showProgress ? generateProgressLine() : generateLine();
+        const isSystem = Math.random() < 0.15;
+        const line = isSystem ? generateSystemEvent() : generateFlow();
         updateTerminal(line);
-
-        // reset the "install" once it completes, so it loops forever
-        if (installed >= totalPkgs) {
-            installed = 0;
-            totalPkgs = Math.floor(Math.random() * 600) + 900;
-        }
-
-        const delay = Math.random() * 180 + 40;
+        const isBurst = Math.random() > 0.15;
+        const delay = isBurst ? Math.random() * 600 + 200 : Math.random() * 3500 + 1500;
         setTimeout(loop, delay);
     };
 

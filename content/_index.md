@@ -23,38 +23,61 @@ template = "index.html"
             hour: '2-digit', minute: '2-digit', second: '2-digit',
             hour12: false
         }).formatToParts(now);
-
         const get = (type) => parts.find(p => p.type === type).value;
         const ms = String(now.getMilliseconds()).padStart(3, '0');
-
         return `${get('year')}-${get('month')}-${get('day')} ${get('hour')}:${get('minute')}:${get('second')}.${ms} EST`;
     };
 
     const bootSequence = [
-        { cat: "main", file: "engine.cc:112", msg: "trading engine v4.2.0 starting", delay: 50 },
-        { cat: "main", file: "engine.cc:140", msg: "loading risk limits and instrument config", delay: 80 },
-        { cat: "feed", file: "md_feed.cc:88", msg: "connecting to market data feed: nasdaq-itch.internal:9001", delay: 200 },
-        { cat: "feed", file: "md_feed.cc:104", msg: "market data feed connected, subscribing to symbols", delay: 150 },
-        { cat: "feed", file: "md_feed.cc:130", msg: "subscribed: AAPL, TSLA, NVDA, AMZN, MSFT, GOOG, META", delay: 120 },
-        { cat: "book", file: "order_book.cc:210", msg: "order book initialized for 7 instruments", delay: 130 },
-        { cat: "risk", file: "risk_engine.cc:75", msg: "risk engine online, max position size loaded", delay: 110 },
-        { cat: "strategy", file: "strategy_mgr.cc:40", msg: "loading strategy: mean_reversion_v2", delay: 140 },
-        { cat: "strategy", file: "strategy_mgr.cc:58", msg: "strategy warmed up, awaiting signal", delay: 160 },
-        { cat: "oms", file: "oms.cc:301", msg: "order management system connected to exchange gateway", delay: 180 },
-        { cat: "main", file: "engine.cc:220", msg: "all systems nominal, entering live trading loop", delay: 100 }
+        { msg: "$ pkg install --recursive ./project", delay: 50 },
+        { msg: "resolving dependency graph...", delay: 250 },
+        { msg: "found 1,204 packages, 38 direct dependencies", delay: 200 },
+        { msg: "checking lockfile integrity... ok", delay: 150 },
+        { msg: "starting fetch stage (12 parallel workers)", delay: 180 },
     ];
 
-    const symbols = ["AAPL", "TSLA", "NVDA", "AMZN", "MSFT", "GOOG", "META"];
-    const sides = ["BUY", "SELL"];
-    const orderTypes = ["LIMIT", "MARKET", "IOC"];
-    const statuses = ["FILLED", "FILLED", "FILLED", "PARTIAL", "REJECTED", "CANCELLED"];
+    // Fake but plausible package names
+    const prefixes = ["core", "util", "react", "async", "node", "http", "type", "data", "cli", "dev", "test", "build", "web", "fast", "micro", "meta"];
+    const suffixes = ["kit", "js", "lib", "helper", "parser", "loader", "runtime", "cache", "stream", "compat", "tools", "engine", "adapter", "wrapper", "core"];
 
-    const systemEvents = [
-        { cat: "risk", file: "risk_engine.cc:120", msg: "position check passed, exposure within limits" },
-        { cat: "feed", file: "md_feed.cc:150", msg: "market data heartbeat ok, latency {lat}ms" },
-        { cat: "book", file: "order_book.cc:260", msg: "order book snapshot synced, seq {ver}" },
-        { cat: "strategy", file: "strategy_mgr.cc:80", msg: "signal recalculated, confidence {n}%" }
+    const randomPkg = () => {
+        const p = prefixes[Math.floor(Math.random() * prefixes.length)];
+        const s = suffixes[Math.floor(Math.random() * suffixes.length)];
+        const major = Math.floor(Math.random() * 8);
+        const minor = Math.floor(Math.random() * 20);
+        const patch = Math.floor(Math.random() * 30);
+        return `${p}-${s}@${major}.${minor}.${patch}`;
+    };
+
+    const actions = [
+        { verb: "fetching", weight: 35 },
+        { verb: "resolving", weight: 20 },
+        { verb: "building", weight: 15 },
+        { verb: "linking", weight: 15 },
+        { verb: "verifying", weight: 10 },
+        { verb: "warning", weight: 5 }
     ];
+
+    const warnings = [
+        "deprecated, use v2 instead",
+        "peer dependency mismatch, using closest match",
+        "no license field found",
+        "engine mismatch (expected node >=18)",
+        "bundled dependency, skipping resolution"
+    ];
+
+    let installed = 0;
+    let totalPkgs = 1204;
+
+    const pickAction = () => {
+        const total = actions.reduce((sum, a) => sum + a.weight, 0);
+        let roll = Math.random() * total;
+        for (const a of actions) {
+            if (roll < a.weight) return a.verb;
+            roll -= a.weight;
+        }
+        return "fetching";
+    };
 
     const updateTerminal = (line) => {
         buffer.shift();
@@ -62,43 +85,51 @@ template = "index.html"
         terminal.innerText = buffer.join('\n');
     };
 
-    const makeBootLog = (entry) => {
-        const ts = getTimestamp();
-        return `[${ts}][1][info][${entry.cat}] [${entry.file}] ${entry.msg}`;
+    const generateLine = () => {
+        const verb = pickAction();
+        const pkg = randomPkg();
+
+        if (verb === "warning") {
+            const warn = warnings[Math.floor(Math.random() * warnings.length)];
+            return `⚠ warning ${pkg}: ${warn}`;
+        }
+
+        if (verb === "fetching") {
+            const size = (Math.random() * 900 + 20).toFixed(0);
+            const speed = (Math.random() * 8 + 0.5).toFixed(1);
+            installed++;
+            return `fetching   ${pkg} (${size}kb @ ${speed}mb/s)`;
+        }
+
+        if (verb === "building") {
+            const time = (Math.random() * 2 + 0.1).toFixed(2);
+            return `building   ${pkg} [${time}s]`;
+        }
+
+        if (verb === "linking") {
+            return `linking    ${pkg} -> node_modules/.pkg`;
+        }
+
+        if (verb === "verifying") {
+            return `verifying  ${pkg} checksum ok`;
+        }
+
+        return `resolving  ${pkg}`;
     };
 
-    const generateLog = () => {
-        const ts = getTimestamp();
-        const symbol = symbols[Math.floor(Math.random() * symbols.length)];
-        const side = sides[Math.floor(Math.random() * sides.length)];
-        const type = orderTypes[Math.floor(Math.random() * orderTypes.length)];
-        const status = statuses[Math.floor(Math.random() * statuses.length)];
-        const price = (Math.random() * 500 + 50).toFixed(2);
-        const size = Math.floor(Math.random() * 900 + 100);
-        const latency = (Math.random() * 8 + 0.2).toFixed(2);
-        return `[${ts}] ${side} ${type} ${symbol} x${size} @ ${price} - ${status} ${latency}ms`;
+    const generateProgressLine = () => {
+        const pct = Math.min(100, ((installed / totalPkgs) * 100)).toFixed(1);
+        const remaining = Math.max(0, totalPkgs - installed);
+        return `[${pct}%] ${installed}/${totalPkgs} packages installed, ${remaining} remaining`;
     };
-
-    const generateSystemEvent = () => {
-        const event = systemEvents[Math.floor(Math.random() * systemEvents.length)];
-        const ver = Math.random().toString(16).substring(2, 8);
-        const lat = (Math.random() * 3 + 0.1).toFixed(1);
-        const n = Math.floor(Math.random() * 30) + 65;
-        const msg = event.msg.replace("{ver}", ver).replace("{lat}", lat).replace("{n}", n);
-        const ts = getTimestamp();
-        return `[${ts}][1][info][${event.cat}] [${event.file}] ${msg}`;
-    };
-
-    // Initialize
-    terminal.innerText = buffer.join('\n');
 
     let bootIndex = 0;
     const runBootstep = () => {
         if (bootIndex < bootSequence.length) {
             const step = bootSequence[bootIndex];
-            updateTerminal(makeBootLog(step));
+            updateTerminal(step.msg);
             bootIndex++;
-            const nextDelay = bootIndex < bootSequence.length ? bootSequence[bootIndex].delay : 3000;
+            const nextDelay = bootIndex < bootSequence.length ? bootSequence[bootIndex].delay : 400;
             setTimeout(runBootstep, nextDelay);
         } else {
             loop();
@@ -106,15 +137,22 @@ template = "index.html"
     };
 
     const loop = () => {
-        const isSystem = Math.random() < 0.20;
-        const logLine = isSystem ? generateSystemEvent() : generateLog();
-        updateTerminal(logLine);
-        const isBurst = Math.random() > 0.05;
-        const delay = isBurst ? Math.random() * 200 : Math.random() * 4000 + 1500;
+        const showProgress = Math.random() < 0.12;
+        const line = showProgress ? generateProgressLine() : generateLine();
+        updateTerminal(line);
+
+        // reset the "install" once it completes, so it loops forever
+        if (installed >= totalPkgs) {
+            installed = 0;
+            totalPkgs = Math.floor(Math.random() * 600) + 900;
+        }
+
+        const delay = Math.random() * 180 + 40;
         setTimeout(loop, delay);
     };
 
-    setTimeout(runBootstep, 400);
+    terminal.innerText = buffer.join('\n');
+    setTimeout(runBootstep, 300);
 })();
 </script>
 {% end %}

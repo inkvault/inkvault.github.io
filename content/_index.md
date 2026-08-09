@@ -134,8 +134,6 @@ Welcome to my personal site. This is where I'll be sharing my adventures, writin
 
 ## Reading list
 
-## Reading list
-
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 24px; margin-top: 16px;">
 
   <a href="https://www.amazon.com/dp/0812979907" target="_blank" rel="noopener" aria-label="A Man for All Markets by Edward O. Thorp" style="text-decoration: none; color: inherit; display: block; transition: transform 0.15s ease;" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'">

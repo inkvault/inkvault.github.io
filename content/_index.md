@@ -134,30 +134,32 @@ Welcome to my personal site. This is where I'll be sharing my adventures, writin
 
 ## Reading list
 
-<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 20px; margin-top: 16px;">
+## Reading list
 
-  <div style="text-align: center;">
-    <img src="/images/books/thorp.jpg" alt="A Man for All Markets cover" style="width: 100%; border-radius: 6px;">
-    <p style="margin: 8px 0 0; font-size: 14px; font-weight: bold;">A Man for All Markets</p>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 24px; margin-top: 16px;">
+
+  <a href="https://www.amazon.com/dp/0812979907" target="_blank" rel="noopener" aria-label="A Man for All Markets by Edward O. Thorp" style="text-decoration: none; color: inherit; display: block; transition: transform 0.15s ease;" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'">
+    <div style="width: 100%; aspect-ratio: 2/3; background-image: url('/images/books/thorp.jpg'); background-size: cover; background-position: center; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.25);"></div>
+    <p style="margin: 10px 0 0; font-size: 14px; font-weight: bold;">A Man for All Markets</p>
     <p style="margin: 2px 0 0; font-size: 12px; opacity: 0.7;">Edward O. Thorp</p>
-  </div>
+  </a>
 
-  <div style="text-align: center;">
-    <img src="/images/books/shannon.jpg" alt="A Mind at Play cover" style="width: 100%; border-radius: 6px;">
-    <p style="margin: 8px 0 0; font-size: 14px; font-weight: bold;">A Mind at Play</p>
+  <a href="https://www.amazon.com/dp/1476766681" target="_blank" rel="noopener" aria-label="A Mind at Play by Jimmy Soni and Rob Goodman" style="text-decoration: none; color: inherit; display: block; transition: transform 0.15s ease;" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'">
+    <div style="width: 100%; aspect-ratio: 2/3; background-image: url('/images/books/soni-goodman.jpg'); background-size: cover; background-position: center; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.25);"></div>
+    <p style="margin: 10px 0 0; font-size: 14px; font-weight: bold;">A Mind at Play</p>
     <p style="margin: 2px 0 0; font-size: 12px; opacity: 0.7;">Jimmy Soni &amp; Rob Goodman</p>
-  </div>
+  </a>
 
-  <div style="text-align: center;">
-    <img src="/images/books/wright-brothers.jpg" alt="The Wright Brothers cover" style="width: 100%; border-radius: 6px;">
-    <p style="margin: 8px 0 0; font-size: 14px; font-weight: bold;">The Wright Brothers</p>
+  <a href="https://www.amazon.com/dp/1476728747" target="_blank" rel="noopener" aria-label="The Wright Brothers by David McCullough" style="text-decoration: none; color: inherit; display: block; transition: transform 0.15s ease;" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'">
+    <div style="width: 100%; aspect-ratio: 2/3; background-image: url('/images/books/wright-brothers.jpg'); background-size: cover; background-position: center; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.25);"></div>
+    <p style="margin: 10px 0 0; font-size: 14px; font-weight: bold;">The Wright Brothers</p>
     <p style="margin: 2px 0 0; font-size: 12px; opacity: 0.7;">David McCullough</p>
-  </div>
+  </a>
 
-  <div style="text-align: center;">
-    <img src="/images/books/plank.jpg" alt="A Small Difference cover" style="width: 100%; border-radius: 6px;">
-    <p style="margin: 8px 0 0; font-size: 14px; font-weight: bold;">A Small Difference</p>
+  <a href="https://www.amazon.com/Small-Difference-Raymond-Plank/dp/0533165873" target="_blank" rel="noopener" aria-label="A Small Difference by Raymond Plank" style="text-decoration: none; color: inherit; display: block; transition: transform 0.15s ease;" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'">
+    <div style="width: 100%; aspect-ratio: 2/3; background-image: url('/images/books/plank.jpg'); background-size: cover; background-position: center; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.25);"></div>
+    <p style="margin: 10px 0 0; font-size: 14px; font-weight: bold;">A Small Difference</p>
     <p style="margin: 2px 0 0; font-size: 12px; opacity: 0.7;">Raymond Plank</p>
-  </div>
+  </a>
 
 </div>

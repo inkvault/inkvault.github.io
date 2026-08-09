@@ -132,3 +132,32 @@ template = "index.html"
 
 Welcome to my personal site. This is where I'll be sharing my adventures, writings, and projects. Currently based in West Virginia, USA.
 
+## Reading list
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 20px; margin-top: 16px;">
+
+  <div style="text-align: center;">
+    <img src="/images/books/thorp.jpg" alt="A Man for All Markets cover" style="width: 100%; border-radius: 6px;">
+    <p style="margin: 8px 0 0; font-size: 14px; font-weight: bold;">A Man for All Markets</p>
+    <p style="margin: 2px 0 0; font-size: 12px; opacity: 0.7;">Edward O. Thorp</p>
+  </div>
+
+  <div style="text-align: center;">
+    <img src="/images/books/shannon.jpg" alt="A Mind at Play cover" style="width: 100%; border-radius: 6px;">
+    <p style="margin: 8px 0 0; font-size: 14px; font-weight: bold;">A Mind at Play</p>
+    <p style="margin: 2px 0 0; font-size: 12px; opacity: 0.7;">Jimmy Soni &amp; Rob Goodman</p>
+  </div>
+
+  <div style="text-align: center;">
+    <img src="/images/books/wright-brothers.jpg" alt="The Wright Brothers cover" style="width: 100%; border-radius: 6px;">
+    <p style="margin: 8px 0 0; font-size: 14px; font-weight: bold;">The Wright Brothers</p>
+    <p style="margin: 2px 0 0; font-size: 12px; opacity: 0.7;">David McCullough</p>
+  </div>
+
+  <div style="text-align: center;">
+    <img src="/images/books/plank.jpg" alt="A Small Difference cover" style="width: 100%; border-radius: 6px;">
+    <p style="margin: 8px 0 0; font-size: 14px; font-weight: bold;">A Small Difference</p>
+    <p style="margin: 2px 0 0; font-size: 12px; opacity: 0.7;">Raymond Plank</p>
+  </div>
+
+</div>
